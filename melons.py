@@ -101,14 +101,14 @@ def process_login():
     
     email = request.form.get('email')
     customer = model.get_customer_by_email(email)
-    print customer
 
     if customer:
         if 'users' in session:
             if customer.email not in session['users']:
                session['users'] = {customer.email: customer.password}
                print session['users']
-               # flash login successful message
+    
+    # flash("Login Successful")
     return redirect("/melons")
 
 @app.route("/checkout")
@@ -117,6 +117,7 @@ def checkout():
     melon listing page."""
     flash("Sorry! Checkout will be implemented in a future version of ubermelon.")
     return redirect("/melons")
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
