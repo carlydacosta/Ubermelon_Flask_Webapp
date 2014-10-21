@@ -98,8 +98,18 @@ def show_login():
 def process_login():
     """TODO: Receive the user's login credentials located in the 'request.form'
     dictionary, look up the user, and store them in the session."""
-    return "Oops! This needs to be implemented"
+    
+    email = request.form.get('email')
+    customer = model.get_customer_by_email(email)
+    print customer
 
+    if customer:
+        if 'users' in session:
+            if customer.email not in session['users']:
+               session['users'] = {customer.email: customer.password}
+               print session['users']
+               # flash login successful message
+    return redirect("/melons")
 
 @app.route("/checkout")
 def checkout():
