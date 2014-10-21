@@ -34,19 +34,26 @@ def shopping_cart():
     list held in the session that contains all the melons to be added. Check
     accompanying screenshots for details."""
     
-    cart_items = session['cart']  # session itself is a dictionary.  'cart' is a key, so what we see are the list of values mapped to cart.
+    #assigning the variable cart_items to the 'cart' value, which as indicated is a dictionary itself, with ids as keys and qty as values.
+    cart_items = session['cart']  
 
+    #we initialize an empty list b/c in our for loop, we are creating a list of dictionaries, with keys name, price, qty and values name, price, qty based on ids.
     melon_details = []
 
+    #this for loop interates over each id:qty in cart_items
     for id, quantity in cart_items.iteritems():
+        #call the get_melon_by_id() function so we can obtain all info for each melon.  we will use this info below to create yet another dictionary
         melon = model.get_melon_by_id(id)
+        #referencing attributes of melon and assigning as values to the melon_dict.
         melon_dict = {
             "name": melon.common_name,
             "price": melon.price,
             "quantity": quantity
         }
+        #appending to the melon_details list initiated above the for loop
         melon_details.append(melon_dict)
 
+    #the list melon_details is then passed to the html document, which iterates over this list to create the items in the cart.
     return render_template("cart.html", melons = melon_details)
 
 @app.route("/add_to_cart/<int:id>")
@@ -57,17 +64,23 @@ def add_to_cart(id):
     Intended behavior: when a melon is added to a cart, redirect them to the
     shopping cart page, while displaying the message
     "Successfully added to cart" """
-
+    # changing the integer id into a string b/c dictionaries prefer keys as strings
     id = str(id)
 
+    # checking to see if the customer has an existing cart (ie is anything added)
     if 'cart' in session:
+        #if cart exists, then checking to see if the item added already exists
         if id in session['cart']:
+            #if the item already exists, then we are increasing the value (in this case the qty) by 1.
             session['cart'][id] += 1
         else:
+            #if the item does not yet exist, then we are adding it to the dictionary with a value of 1.
             session['cart'][id] = 1
+        #if cart does not exist, then we are assigning the cart key a value, which is another dictionary.  This has a key of 'id' and initial value of 1
     else:
         session['cart'] = {id:1}
 
+    #after adding the item to the cart, we are redirecting to the /cart page, which then calls the function shopping_cart().
     return redirect("/cart")
 
 @app.route("/sessionclear", methods=["GET"])
